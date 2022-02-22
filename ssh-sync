@@ -1,0 +1,9 @@
+#!/bin/sh
+key=$(readlink -f $1)
+src=$(readlink -f $2)
+target=$3
+ip=$4
+
+while inotifywait -r -e modify,create,delete $src; do
+    rsync -azP -e "ssh -i $key" $src ubuntu@$ip:$target
+done
