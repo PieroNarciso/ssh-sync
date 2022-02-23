@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/sh
 
 target=$HOME/.local/bin
 filename=ssh-sync
