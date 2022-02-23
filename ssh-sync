@@ -1,9 +1,74 @@
 #!/bin/sh
-key=$(readlink -f $1)
-src=$(readlink -f $2)
-target=$3
-ip=$4
 
+key=""
+src="."
+target=""
+ip=""
+
+Help() {
+    echo "Syncronize and watch files and directories from a local machine to"
+    echo "remote machine by ssh"
+    echo
+    echo "Options:"
+    echo " -i       Path to private key"
+    echo " -d       File/Directory to sync (default current directory)"
+    echo " -t       Target directory in the remote machine"
+    echo " -p       Ip address from the remote machine"
+    echo
+    echo " -h       Show help"
+}
+
+# Parse arguments
+while getopts "hi:d:t:p:" option; do
+    case $option in
+	h)
+	    Help
+	    exit;;
+	i)
+	    key=${OPTARG};;
+	d)
+	    src=${OPTARG};;
+	t)
+	    target=${OPTARG};;
+	p)
+	    ip=${OPTARG};;
+    esac
+done
+
+
+# Validate require arguments
+if [ -z $key ]; then
+    echo "Missing -i argument"
+    Help
+    exit 1
+fi
+if [ -z $target ]; then
+    echo "Missing -t argument"
+    Help
+    exit 1
+fi
+if [ -z $ip ]; then
+    echo "Missing -p argument"
+    Help
+    exit 1
+fi
+
+
+# Validate if the private key exists
+key=$(readlink -f $key)
+if [ ! -f $key ]; then
+    echo "$key file does not exists"
+    exit 1
+fi
+
+# Validate if file or directory exists
+src=$(readlink -f $src)
+if [ ! -d $src -a ! -f $src ]; then
+    echo "$src directory/file does not exists"
+    exit 1
+fi
+
+# Watch for changes and syncronize
 while inotifywait -r -e modify,create,delete $src; do
     rsync -azP -e "ssh -i $key" $src ubuntu@$ip:$target
 done
