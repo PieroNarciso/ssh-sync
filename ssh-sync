@@ -4,6 +4,7 @@ key=""
 src="."
 target=""
 ip=""
+username=""
 
 Help() {
     echo "Syncronize and watch files and directories from a local machine to"
@@ -14,12 +15,13 @@ Help() {
     echo " -d       File/Directory to sync (default current directory)"
     echo " -t       Target directory in the remote machine"
     echo " -p       Ip address from the remote machine"
+    echo " -u        Remote machine username"
     echo
     echo " -h       Show help"
 }
 
 # Parse arguments
-while getopts "hi:d:t:p:" option; do
+while getopts "hi:d:t:p:u:" option; do
     case $option in
 	h)
 	    Help
@@ -32,6 +34,8 @@ while getopts "hi:d:t:p:" option; do
 	    target=${OPTARG};;
 	p)
 	    ip=${OPTARG};;
+	u)
+	    username=${OPTARG};;
     esac
 done
 
@@ -49,6 +53,11 @@ if [ -z $target ]; then
 fi
 if [ -z $ip ]; then
     echo "Missing -p argument"
+    Help
+    exit 1
+fi
+if [ -z $username ]; then
+    echo "Missing -u argument"
     Help
     exit 1
 fi
@@ -70,5 +79,5 @@ fi
 
 # Watch for changes and syncronize
 while inotifywait -r -e modify,create,delete $src; do
-    rsync -azP -e "ssh -i $key" $src ubuntu@$ip:$target
+    rsync -azP -e "ssh -i $key" $src $username@$ip:$target
 done
