@@ -14,14 +14,14 @@ Help() {
     echo " -i       Path to private key"
     echo " -d       File/Directory to sync (default current directory)"
     echo " -t       Target directory in the remote machine"
-    echo " -p       Ip address from the remote machine"
-    echo " -u        Remote machine username"
+    echo " -o       Ip address from the remote machine"
+    echo " -u       Remote machine username"
     echo
     echo " -h       Show help"
 }
 
 # Parse arguments
-while getopts "hi:d:t:p:u:" option; do
+while getopts "hi:d:t:o:u:" option; do
     case $option in
 	h)
 	    Help
@@ -32,7 +32,7 @@ while getopts "hi:d:t:p:u:" option; do
 	    src=${OPTARG};;
 	t)
 	    target=${OPTARG};;
-	p)
+	o)
 	    ip=${OPTARG};;
 	u)
 	    username=${OPTARG};;
@@ -52,7 +52,7 @@ if [ -z $target ]; then
     exit 1
 fi
 if [ -z $ip ]; then
-    echo "Missing -p argument"
+    echo "Missing -o argument"
     Help
     exit 1
 fi
