@@ -77,6 +77,9 @@ if [ ! -d $src -a ! -f $src ]; then
     exit 1
 fi
 
+# Syncronize files and directories for the first time
+rsync -azP -e "ssh -i $key" $src $username@$ip:$target
+
 # Watch for changes and syncronize
 while inotifywait -r -e modify,create,delete $src; do
     rsync -azP -e "ssh -i $key" $src $username@$ip:$target
