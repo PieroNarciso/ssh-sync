@@ -14,8 +14,12 @@ Install dependencies
 
 ### Arch linux
 ```bash
-# pacman -S coreutils inotify-tools rsync
+# pacman -S coreutils inotify-tools rsync curl
+```
 
+### Ubuntu
+```bash
+# apt install coreutils inotify-tools rsync curl
 ```
 
 Install script
